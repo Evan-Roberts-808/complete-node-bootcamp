@@ -1,15 +1,19 @@
 doctype html 
 html 
-    head 
-        title  Natours | #{tour}
+    head
+        meta(charset='UTF-8')
+        meta(name='viewport' content='width=device-width, initial-scale=1.0')
+        link(href='https://fonts.googleapis.com/css?family=Lato:300,300i,700' rel='stylesheet')
         link(rel='stylesheet' href='css/style.css')
         link(rel='shortcut icon' type='image/png' href='img/favicon.png')
+        title Natours | #{title}
+
     body 
-        h1= tour
-        h2= user.toUpperCase()
-
-
-
-        p This is text 
-        // comment shown in console
-        //- comment not shown in console
+        // Header
+        include _header
+        // Content
+        block content 
+            h1 This is a placeholder 
+        
+        // Footer
+        include _footer
