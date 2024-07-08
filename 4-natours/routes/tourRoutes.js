@@ -1,54 +1,61 @@
 const express = require('express');
-const toursController = require('./../controllers/tourController');
+const tourController = require('./../controllers/tourController');
 const authController = require('./../controllers/authController');
-const reviewRouter = require('./reviewRoutes');
+const reviewRouter = require('./../routes/reviewRoutes');
 
-const tourRouter = express.Router();
+const router = express.Router();
 
-// tourRouter.param('id', toursController.checkID)
+// router.param('id', tourController.checkID);
 
-tourRouter.use('/:tourId/reviews', reviewRouter);
+// POST /tour/234fad4/reviews
+// GET /tour/234fad4/reviews
 
-tourRouter
+router.use('/:tourId/reviews', reviewRouter);
+
+router
   .route('/top-5-cheap')
-  .get(toursController.aliasTopTours, toursController.getAllTours);
+  .get(tourController.aliasTopTours, tourController.getAllTours);
 
-tourRouter.route('/tour-stats').get(toursController.getTourStats);
-tourRouter
+router.route('/tour-stats').get(tourController.getTourStats);
+router
   .route('/monthly-plan/:year')
   .get(
     authController.protect,
     authController.restrictTo('admin', 'lead-guide', 'guide'),
-    toursController.getMonthlyPlan
+    tourController.getMonthlyPlan
   );
 
-tourRouter
+router
   .route('/tours-within/:distance/center/:latlng/unit/:unit')
-  .get(toursController.getToursWithin);
+  .get(tourController.getToursWithin);
+// /tours-within?distance=233&center=-40,45&unit=mi
+// /tours-within/233/center/-40,45/unit/mi
 
-tourRouter.route('/distances/:latlng/unit/:unit').get(tourController.getDistances)
+router.route('/distances/:latlng/unit/:unit').get(tourController.getDistances);
 
-tourRouter
+router
   .route('/')
-  .get(toursController.getAllTours)
+  .get(tourController.getAllTours)
   .post(
     authController.protect,
     authController.restrictTo('admin', 'lead-guide'),
-    toursController.createTour
+    tourController.createTour
   );
 
-tourRouter
+router
   .route('/:id')
-  .get(toursController.getTour)
+  .get(tourController.getTour)
   .patch(
     authController.protect,
     authController.restrictTo('admin', 'lead-guide'),
-    toursController.updateTour
+    tourController.uploadTourImages,
+    tourController.resizeTourImages,
+    tourController.updateTour
   )
   .delete(
     authController.protect,
     authController.restrictTo('admin', 'lead-guide'),
-    toursController.deleteTour
+    tourController.deleteTour
   );
 
-module.exports = tourRouter;
+module.exports = router;
